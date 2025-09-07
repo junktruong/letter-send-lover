@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Duyen yeu dau</title>
+    <meta name="description" content="Gửi Sữa yêu – một chiếc phong thư nho nhỏ" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap');
+
+        :root {
+            --bg: #fff5f7;
+            --accent: #ff6b81;
+            --accent-dark: #e95870;
+            --paper: #fff;
+            --envelope: #f5c6d6;
+            --envelope-dark: #efb0c6;
+            --text: #333;
+            --shadow: rgba(0, 0, 0, .15);
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        html,
+        body {
+            height: 100%
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Quicksand', sans-serif;
+            background: radial-gradient(1200px 800px at 70% -10%, #ffe3ea 0%, var(--bg) 40%, var(--bg) 100%);
+            display: grid;
+            place-items: center;
+            color: var(--text);
+        }
+
+        .wrap {
+            width: min(720px, 92vw);
+            display: grid;
+            gap: 18px;
+            justify-items: center;
+        }
+
+        h1 {
+            margin: 0;
+            font-weight: 700;
+            letter-spacing: .3px;
+            font-size: clamp(22px, 3.2vw, 32px);
+            text-align: center;
+            color: #c53a52;
+        }
+
+        p.lead {
+            margin: 0;
+            opacity: .8;
+            text-align: center;
+        }
+
+        .scene {
+            position: relative;
+            width: min(520px, 90vw);
+            height: min(360px, 62vw);
+            perspective: 1200px;
+        }
+
+        .envelope {
+            position: absolute;
+            inset: 0;
+            margin: auto;
+            width: 100%;
+            height: 100%;
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .envelope:focus {
+            outline: 4px solid #0000;
+        }
+
+        .env-base {
+            position: absolute;
+            inset: 0;
+            border-radius: 18px;
+            box-shadow: 0 14px 30px var(--shadow);
+            background: linear-gradient(180deg, var(--envelope) 0%, var(--envelope-dark) 100%);
+        }
+
+        .pocket {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 58%;
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+            background: linear-gradient(180deg, #f8d4e1 0%, #f1a9c0 100%);
+            border-bottom-left-radius: 18px;
+            border-bottom-right-radius: 18px;
+        }
+
+        .flap {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            height: 60%;
+            clip-path: polygon(0 100%, 50% 0, 100% 100%);
+            background: linear-gradient(180deg, #f1a9c0 0%, #f8d4e1 100%);
+            transform-origin: 50% 0%;
+            transition: transform .9s cubic-bezier(.2, .7, .15, 1.05);
+            border-top-left-radius: 18px;
+            border-top-right-radius: 18px;
+            backface-visibility: hidden;
+        }
+
+        .letter {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%) translateY(10%);
+            bottom: -50%;
+            width: 82%;
+            max-height: 170%;
+            background: var(--paper);
+            border-radius: 14px;
+            padding: 18px 22px;
+            box-shadow: 0 10px 26px rgba(0, 0, 0, .18);
+            transition: transform 1s cubic-bezier(.2, .7, .15, 1.05), opacity .6s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            opacity: .0;
+            overflow-y: auto;
+        }
+
+        .letter h2 {
+            margin: 0;
+            font-size: clamp(18px, 2.6vw, 24px);
+            color: #bf2e4a
+        }
+
+        .letter p {
+            margin: 0;
+            line-height: 1.6;
+            font-size: clamp(14px, 2.4vw, 16px);
+        }
+
+        .seal {
+            position: absolute;
+            top: 46%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #ffd7df, #ff98ac);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, .15), inset 0 2px 4px rgba(255, 255, 255, .6);
+            display: grid;
+            place-items: center;
+            font-weight: 700;
+            color: white;
+            letter-spacing: 1px;
+        }
+
+        .envelope.open .flap {
+            transform: rotateX(180deg);
+        }
+
+        .envelope.open .letter {
+            transform: translateX(-50%) translateY(-42%);
+            opacity: 1;
+        }
+
+        .envelope.open .seal {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(.8);
+            transition: .4s ease;
+        }
+
+        .hint {
+            font-size: 14px;
+            opacity: .7;
+            text-align: center;
+        }
+
+        .pulse {
+            animation: pulse 1.6s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: translateY(0)
+            }
+
+            50% {
+                transform: translateY(-3px)
+            }
+
+            100% {
+                transform: translateY(0)
+            }
+        }
+
+        .hearts {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .heart {
+            position: absolute;
+            font-size: 18px;
+            opacity: 0;
+            animation: floatUp 3.4s ease-in forwards;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(20px) scale(.7) rotate(0);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: .9;
+            }
+
+            100% {
+                transform: translateY(-240px) scale(1.2) rotate(18deg);
+                opacity: 0;
+            }
+        }
+
+        .btn {
+            align-self: flex-start;
+            padding: 10px 14px;
+            border: none;
+            border-radius: 999px;
+            background: linear-gradient(180deg, var(--accent) 0%, var(--accent-dark) 100%);
+            color: #fff;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 10px 16px rgba(255, 107, 129, .35);
+            transition: transform .08s ease;
+            margin-top: 8px;
+        }
+
+        .btn:active {
+            transform: scale(.98);
+        }
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: .3s ease;
+        }
+
+        .modal.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-box {
+            background: white;
+            border-radius: 14px;
+            max-width: 520px;
+            width: 90%;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .modal-box h3 {
+            margin: 0;
+            color: #bf2e4a;
+            font-weight: 700;
+        }
+
+        .modal-box textarea {
+            width: 100%;
+            min-height: 120px;
+            resize: vertical;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            font-family: inherit;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        #toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .toast-msg {
+            background: linear-gradient(180deg, var(--accent) 0%, var(--accent-dark) 100%);
+            color: #fff;
+            padding: 12px 18px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, .25);
+            font-weight: 600;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideUpFade 0.4s forwards;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes slideUpFade {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .toast-heart {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: floatToast 2s ease forwards;
+            opacity: 0;
+        }
+
+        @keyframes floatToast {
+            0% {
+                transform: translateX(-50%) translateY(0) scale(0.6);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateX(-50%) translateY(-60px) scale(1.2);
+                opacity: 0;
+            }
+        }
+
+        footer {
+            font-size: 12px;
+            opacity: .6;
+            text-align: center;
+        }
+
+        @media (max-width:420px) {
+            .scene {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <h1>Gửi Sữa yêu – một chiếc phong thư nho nhỏ</h1>
+        <p class="lead">Bấm vào dưới nhé 💌</p>
+
+        <div class="scene">
+            <div class="envelope" id="envelope" role="button" aria-label="Mở phong thư" tabindex="0">
+                <div class="env-base"></div>
+                <div class="pocket"></div>
+                <div class="flap"></div>
+                <div class="seal pulse">❤</div>
+
+                <div class="letter" id="letter">
+                    <h2>Em yêu à,</h2>
+                    <p>
+                        Anh biết dạo này em rất buồn và mệt. Anh có thể không hiểu hết những gì em đang trải qua, nhưng
+                        anh muốn em nhớ rằng em không bao giờ phải chịu đựng một mình.
+                    </p>
+                    <p>
+                        Dù chúng ta xa nhau, anh vẫn luôn bên em, lắng nghe và cùng em đi qua mọi khó khăn. Em mạnh mẽ
+                        hơn em nghĩ nhiều lắm, và anh tin rồi mọi chuyện cũng sẽ dần ổn thôi.
+                    </p>
+                    <p>
+                        Anh luôn yêu và ở cạnh em, dù ở bất cứ đâu ❤
+                    </p>
+                    <p>
+                        Thương em nhiều ❤
+                    </p>
+                    <div style=" display: flex; flex-direction: row; ">
+                        <button class="btn" id="btnAgain" aria-label="Đóng thư">Đóng thư</button>
+                        <p> &nbsp; &nbsp;</p>
+                        <button class="btn" id="btnWrite" aria-label="Viết gì đó gửi ông trời">Viết gì đó gửi ông
+                            trời</button>
+                    </div>
+
+                </div>
+
+                <div class="hearts" id="hearts" aria-hidden="true"></div>
+            </div>
+        </div>
+
+        <footer>@ from Quoc Khanh</footer>
+    </div>
+
+    <div class="modal" id="modal">
+        <div class="modal-box">
+            <h3>Hãy viết thật thoải mái nhé, cái này anh không nhận được đâu, coi như em gửi cho ông trời</h3>
+            <textarea id="wishText" placeholder="Viết điều em muốn gửi..."></textarea>
+            <div class="modal-actions">
+                <button class="btn" id="btnCancel">Hủy</button>
+                <button class="btn" id="btnSend">Gửi</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast"></div>
+
+    <script>
+        const env = document.getElementById('envelope');
+        const heartsBox = document.getElementById('hearts');
+        const btnAgain = document.getElementById('btnAgain');
+        const btnWrite = document.getElementById('btnWrite');
+        const modal = document.getElementById('modal');
+        const btnCancel = document.getElementById('btnCancel');
+        const btnSend = document.getElementById('btnSend');
+        const wishText = document.getElementById('wishText');
+        const toastBox = document.getElementById('toast');
+
+        let isOpen = false;
+
+        function toggleEnvelope(openForce) {
+            isOpen = (typeof openForce === 'boolean') ? openForce : !isOpen;
+            env.classList.toggle('open', isOpen);
+            if (isOpen) { burstHearts(); }
+        }
+
+        env.addEventListener('click', (e) => {
+            if (e.target === btnAgain || e.target === btnWrite) { return; }
+            toggleEnvelope(true);
+        });
+
+        env.addEventListener('keydown', (e) => {
+            if (['Enter', ' '].includes(e.key)) {
+                e.preventDefault();
+                toggleEnvelope(true);
+            }
+            if (['Escape'].includes(e.key)) {
+                toggleEnvelope(false);
+            }
+        });
+
+        btnAgain.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleEnvelope(false);
+            setTimeout(() => env.focus(), 0);
+        });
+
+        btnWrite.addEventListener('click', (e) => {
+            e.stopPropagation();
+            modal.classList.add('show');
+            wishText.focus();
+        });
+
+        btnCancel.addEventListener('click', () => {
+            modal.classList.remove('show');
+        });
+
+        btnSend.addEventListener('click', () => {
+            const content = wishText.value.trim();
+            if (content) {
+                fetch("/send", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ message: content })
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        wishText.value = '';
+                        modal.classList.remove('show');
+                        showToast("✨ Đã gửi cho ông trời rồi nhé ✨");
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        showToast("❌ Lỗi gửi tin nhắn");
+                    });
+            }
+        });
+
+
+        function burstHearts() {
+            const count = 18 + Math.floor(Math.random() * 12);
+            const rect = env.getBoundingClientRect();
+            for (let i = 0; i < count; i++) {
+                const h = document.createElement('div');
+                h.className = 'heart';
+                h.textContent = Math.random() > .2 ? '❤' : (Math.random() > .5 ? '💕' : '💖');
+                const startX = 20 + Math.random() * (rect.width - 40);
+                h.style.left = startX + 'px';
+                h.style.bottom = '22%';
+                h.style.animationDelay = (i * 0.05) + 's';
+                h.style.fontSize = (16 + Math.random() * 16) + 'px';
+                heartsBox.appendChild(h);
+                setTimeout(() => h.remove(), 3600 + i * 50);
+            }
+        }
+
+        function showToast(message) {
+            const msg = document.createElement('div');
+            msg.className = 'toast-msg';
+            msg.textContent = message;
+
+            // thêm icon tim bay
+            const heart = document.createElement('div');
+            heart.className = 'toast-heart';
+            heart.textContent = '❤';
+            msg.appendChild(heart);
+
+            toastBox.appendChild(msg);
+
+            setTimeout(() => {
+                msg.style.opacity = '0';
+                msg.style.transform = 'translateY(-20px)';
+                setTimeout(() => msg.remove(), 400);
+            }, 3000);
+        }
+    </script>
+</body>
+
+</html>
